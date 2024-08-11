@@ -4,7 +4,7 @@
                             
     primo db 'Es primo$'                            
     noPrimo db 'No es primo$'                
-    numero dw 97                
+    numero dw 0     ;Numero a testear              
 
 .code
 
@@ -15,8 +15,10 @@ main:
     
     mov ax, numero
     mov bx, ax 
-    mov cx, 1
+    mov cx, 1 
     
+    cmp ax, 2
+    jb no_primo
     jmp buscar_divisores
     
 buscar_divisores:
