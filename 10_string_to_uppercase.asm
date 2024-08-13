@@ -1,43 +1,28 @@
-.model small
-.stack 100h
-.data
 
-    frase db 'hola mundo$' 
-    fin db 20 dup(?)
+; You may customize this and other start-up templates; 
+; The location of this template is c:\emu8086\inc\0_com_template.txt
 
-.code                    
-    
-main:   
+org 100h
 
-    mov ax, @data
-    mov ds, ax
-    
-    mov si, offset frase
-    mov di, offset fin 
-    
-uppercase: 
+    mov bp, offset frase
 
-    mov ax, 0
-    
-    lodsb
-    
+mayusculas:
+    mov ax, [bp]
     cmp al, '$'
-    je fin_programa    
-         
-    sub al, 20h  
-    push ax     
+    je fin    
+    sub ax, 20h
+    mov [bp], al 
+    inc bp
+    jmp mayusculas
     
-    jmp uppercase 
-    
-imprimir:
-    mov dx, sp
+fin:
     mov ah, 9
+    mov dx, offset frase
     int 21h
-        
-      
-    
-fin_programa:
-    mov ah, 4Ch
-    int 21h       
+ret    
 
-end main
+ret
+
+    frase db 'hola mundo', '$'
+
+end
