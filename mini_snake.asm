@@ -7,72 +7,92 @@ org 100h
     MOV DH, 00
     MOV DL, 00
     
-    CALL control         	       
+    CALL mover_derecha         	       
 
 ret 
+
+interrupcion_16h_01h:
+    MOV AH, 01
+    INT 16h
+RET 
 
 control: 
 
             
-    MOV AH, 01
+    MOV AH, 00
     INT 16h 
                             
-    CMP AL, 61h    ;IZQUIERDA
-    JNE izquierda                            
-    CMP AL, 64h    ;DERECHA 
-    JNE derecha   
-    CMP AL, 77h    ;ARRIBA
-    JNE arriba    
-    CMP AL, 73h    ;ABAJO
-    JNE abajo 
+    CMP AL, izquierda    ;IZQUIERDA
+    JE mover_izquierda
+                                
+    CMP AL, derecha    ;DERECHA 
+    JE mover_derecha
+       
+    CMP AL, arriba    ;ARRIBA
+    JE mover_arriba
+        
+    CMP AL, abajo    ;ABAJO
+    JE mover_abajo 
     
     JMP control
 
 RET       
 
-arriba:
+mover_arriba:
 
     CALL repintar_caracter
     
     MOV AH, 02
     DEC DH          ;FILA 
-    INT 10h  
+    INT 10h
+    
+    CALL interrupcion_16h_01h
+    JZ mover_arriba  
     
     JMP control
 
 RET
 
-abajo:
+mover_abajo:
 
     CALL repintar_caracter
     
     MOV AH, 02
     INC DH          ;FILA
-    INT 10h
+    INT 10h 
+    
+    CALL interrupcion_16h_01h
+    JZ mover_abajo
     
     JMP control    
 
 RET       
         
-derecha:  
+mover_derecha:  
 
     CALL repintar_caracter
     
     MOV AH, 02
     INC DL          ;COLUMNA  
-    INT 10h  
+    INT 10h
+    
+    CALL interrupcion_16h_01h
+    JZ mover_derecha  
     
     JMP control
 
 RET
 
-izquierda:  
+mover_izquierda:  
 
     CALL repintar_caracter
     
     MOV AH, 02
     DEC DL          ;COLUMNA  
-    INT 10h  
+    INT 10h
+    
+    CALL interrupcion_16h_01h
+    JZ mover_izquierda  
 
     JMP control
 
@@ -91,4 +111,9 @@ repintar_caracter:
     MOV CX, 1
     INT 10h
 
-RET 
+RET
+
+izquierda   DB  61h  
+derecha     DB  64h   
+arriba      DB  77h
+abajo       DB  73h 
