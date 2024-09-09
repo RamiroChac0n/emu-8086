@@ -46,7 +46,7 @@
         lea dx, longitud_frase
         int 21h  
         
-        lea si, frase_inicio
+        lea si, frase_inicio  +2
         lea di, frase_fin 
         
                

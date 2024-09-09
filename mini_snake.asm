@@ -5,7 +5,11 @@
 org 100h 
 
     MOV DH, 00
-    MOV DL, 00
+    MOV DL, 00 
+    
+    MOV AH, 00h 
+    MOV AL, 13h
+    INT 10h
     
     CALL mover_derecha         	       
 
@@ -40,10 +44,11 @@ RET
 
 mover_arriba:
 
-    CALL repintar_caracter
+    CALL repintar_caracter 
+    CALL borde_superior_inferior 
     
     MOV AH, 02
-    DEC DH          ;FILA 
+    DEC DH          ;FILA
     INT 10h
     
     CALL interrupcion_16h_01h
@@ -56,6 +61,7 @@ RET
 mover_abajo:
 
     CALL repintar_caracter
+    CALL borde_superior_inferior
     
     MOV AH, 02
     INC DH          ;FILA
@@ -70,10 +76,11 @@ RET
         
 mover_derecha:  
 
-    CALL repintar_caracter
+    CALL repintar_caracter 
+    CALL bordes_laterales
     
     MOV AH, 02
-    INC DL          ;COLUMNA  
+    INC DL          ;COLUMNA
     INT 10h
     
     CALL interrupcion_16h_01h
@@ -86,6 +93,7 @@ RET
 mover_izquierda:  
 
     CALL repintar_caracter
+    CALL bordes_laterales
     
     MOV AH, 02
     DEC DL          ;COLUMNA  
@@ -110,6 +118,50 @@ repintar_caracter:
     MOV BL, 0000B
     MOV CX, 1
     INT 10h
+
+RET  
+
+borde_superior_inferior:
+
+    CMP DH, 0
+    JBE arriba_abajo
+    
+    CMP DH, 24
+    JGE abajo_arriba
+
+RET
+
+arriba_abajo:
+
+    MOV DH, 24
+
+RET
+
+abajo_arriba:
+
+    MOV DH, 00
+
+RET 
+
+bordes_laterales:
+
+    CMP DL, 00
+    JBE derecha_izquierda
+    
+    CMP DL, 39
+    JGE izquierda_derecha
+
+RET
+
+derecha_izquierda:
+
+    MOV DL, 39
+
+RET
+
+izquierda_derecha:
+
+    MOV DL, 00
 
 RET
 
