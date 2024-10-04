@@ -2,54 +2,37 @@
 
 int longitud = 0;
 
-void longitudCadena(char *cadena){
+int longitudCadena(char *cadena){
+
     asm(
-        "movl %[cadena], %%esi;"
         "movl $0, %%ecx;"
-        :
-        : [cadena] "g" (cadena)
-        : "esi", "ecx"
-    );
-
-    contar:
-    asm(
-        "movb (%%esi), %%al;"
-        :
-        :
-        :"ebx", "ecx", "al"
-    );
-
-    asm goto(
+        "avanzar:;"
+        "lodsb;"
         "cmpb $0, %%al;"
-        "je %l[fin];"
+        "je fin;"
+        "stosb;"
         "incl %%ecx;"
-        "incl %%esi;"
-        "jmp %l[contar];"
+        "jmp avanzar;" 
+        "fin:;"
+        "movl %%ecx, %[longitud];"       
+        :   "+S" (cadena), "+D" (cadena), [longitud] "=g" (longitud)
         :
-        :
-        :"ebx", "ecx", "al"
-        :   contar, fin
+        :   "ecx", "al"
     );
-
-    fin:
-    asm(
-        "movl %%ecx, %[longitud];"
-        :   [longitud] "=g" (longitud)
-        :
-        :
-    );
+    return longitud;
 }
 
 int main(void){
 
     char cadena[100];
+    char *ptr = cadena;
 
     printf("Ingrese una cadena: ");
     fgets(cadena, sizeof(cadena), stdin);  
 
-    longitudCadena(cadena);
+    longitudCadena(ptr);
 
-    printf("La longitud de la cadena es: %d\n", longitud);
+    printf("La longitud de la cadena es: %d\n", longitud -1);
 
     return 0;
 }
